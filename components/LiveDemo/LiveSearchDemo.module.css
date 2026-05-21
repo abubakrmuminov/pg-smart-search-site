@@ -1,0 +1,382 @@
+.section {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  overflow: hidden;
+  background: var(--s-0);
+}
+
+/* ── Canvas layer (fills entire section) ───────────────────────────────── */
+.canvasLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.pipelineCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvasOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(3,3,3,0.55) 30%, rgba(3,3,3,0.88) 100%);
+}
+
+/* ── Foreground UI ─────────────────────────────────────────────────────── */
+.ui {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Status badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  border: 1px solid;
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-family: var(--font-jetbrains);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  transition: color 0.25s, border-color 0.25s;
+}
+
+.statusDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: blinkDot 1s step-end infinite;
+}
+
+@keyframes blinkDot {
+  50% { opacity: 0; }
+}
+
+/* Input row */
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--c-turbo);
+  box-shadow: 0 0 0 3px rgba(var(--c-turbo-rgb), 0.08);
+}
+
+.inputPrefix {
+  font-family: var(--font-jetbrains);
+  font-size: 20px;
+  color: var(--c-turbo);
+  padding: 0 1rem 0 1.5rem;
+  opacity: 0.7;
+  user-select: none;
+}
+
+.queryInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-jetbrains);
+  font-size: 18px;
+  color: #fff;
+  padding: 1.1rem 0;
+  caret-color: var(--c-turbo);
+}
+
+.queryInput::placeholder {
+  color: rgba(255,255,255,0.18);
+  font-size: 16px;
+}
+
+.execBtn {
+  background: var(--c-turbo);
+  color: var(--s-0);
+  border: none;
+  padding: 0 2rem;
+  height: 100%;
+  font-family: var(--font-jetbrains);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s;
+  min-width: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.execBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.execBtnRunning {
+  background: var(--c-cobalt);
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0,0,0,0.3);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Options row */
+.optionsRow {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-jetbrains);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  user-select: none;
+}
+
+.option input[type="checkbox"] {
+  accent-color: var(--c-violet);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.sliderInline {
+  accent-color: var(--c-turbo);
+  width: 120px;
+  cursor: pointer;
+}
+
+.sliderVal {
+  color: var(--c-turbo);
+  font-size: 10px;
+}
+
+/* Results */
+.results {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 1rem;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resultRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  font-family: var(--font-jetbrains);
+  font-size: 12px;
+}
+
+.rEngine {
+  color: var(--c-turbo);
+  font-size: 9px;
+  background: rgba(34,211,238,0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.rText {
+  flex: 1;
+  color: rgba(255,255,255,0.8);
+}
+
+.rRank {
+  color: var(--c-emerald);
+  opacity: 0.6;
+}
+
+.abortMsg {
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  color: var(--c-violet);
+  padding: 0.8rem;
+}
+
+.placeholder {
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  color: rgba(255,255,255,0.12);
+  text-align: center;
+  margin: auto;
+  padding: 1rem 0;
+}
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 1rem;
+  }
+
+  .ui {
+    gap: 1rem;
+  }
+
+  .queryInput {
+    padding: 1rem 0;
+    font-size: 15px;
+  }
+
+  .queryInput::placeholder {
+    font-size: 14px;
+  }
+
+  .execBtn {
+    padding: 0 1.5rem;
+    min-width: 80px;
+    font-size: 10px;
+  }
+
+  .optionsRow {
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
+  .option {
+    font-size: 9px;
+    gap: 0.5rem;
+  }
+
+  .sliderInline {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .results {
+    padding: 0.8rem;
+    min-height: 100px;
+  }
+
+  .resultRow {
+    padding: 0.6rem;
+    font-size: 11px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .rText {
+    width: 100%;
+    order: -1;
+  }
+}
+/* ── Technical Trace ─────────────────────────────────────────────────────── */
+.traceContainer {
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 1.25rem;
+  font-family: var(--font-jetbrains);
+  overflow: hidden;
+}
+
+.traceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.traceTitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.5);
+}
+
+.traceCode {
+  font-size: 9px;
+  color: var(--c-turbo);
+  opacity: 0.5;
+}
+
+.traceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) 2fr;
+  gap: 1.5rem;
+}
+
+.traceItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.traceLabel {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.2);
+}
+
+.traceVal {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tokenList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.token {
+  font-size: 9px;
+  background: rgba(255,255,255,0.05);
+  color: var(--c-turbo);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(34,211,238,0.15);
+}
+
+@media (max-width: 768px) {
+  .traceGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,128 @@
+.getStarted {
+  position: relative;
+  min-height: 100vh;
+  background: var(--s-0);
+  color: #fff;
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  padding: 120px 2rem 5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 4rem;
+}
+
+.eyebrow {
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  color: var(--c-turbo);
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-family: var(--font-sora);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.5rem;
+  line-height: 1.1;
+}
+
+.desc {
+  font-family: var(--font-inter);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-sora);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.sectionTitle::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--c-turbo);
+  border-radius: 2px;
+}
+
+.text {
+  font-family: var(--font-inter);
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.featureItem {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.featureIcon {
+  font-size: 24px;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.featureName {
+  display: block;
+  font-family: var(--font-sora);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.featureDesc {
+  font-family: var(--font-inter);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+.footer {
+  text-align: center;
+  padding: 5rem 0 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 36px;
+  }
+}

@@ -1,0 +1,50 @@
+:root {
+  /* Brand Palette */
+  --c-turbo: #22d3ee;
+  --c-turbo-rgb: 34, 211, 238;
+  --c-cobalt: #2a59ff;
+  --c-cobalt-rgb: 42, 89, 255;
+  --c-emerald: #10b981;
+  --c-emerald-rgb: 16, 185, 129;
+  --c-violet: #7c3aed;
+  --c-violet-rgb: 124, 58, 237;
+  --c-amber: #f59e0b;
+  --c-amber-rgb: 245, 158, 11;
+
+  /* State Colors */
+  --c-win: var(--c-emerald);
+  --c-abort: var(--c-violet);
+  --c-idle: #4b5563;
+  --c-active: var(--c-turbo);
+
+  /* Surface Levels */
+  --s-0: #030303;
+  --s-1: #0a0a0f;
+  --s-2: #0f0f1a;
+  --s-3: #141424;
+  --s-4: #1a1a2e;
+
+  /* Alpha variants (Auto-generated shorthand pattern) */
+  --c-turbo-10: rgba(var(--c-turbo-rgb), 0.1);
+  --c-turbo-20: rgba(var(--c-turbo-rgb), 0.2);
+  --c-turbo-40: rgba(var(--c-turbo-rgb), 0.4);
+  --c-turbo-80: rgba(var(--c-turbo-rgb), 0.8);
+
+  --c-cobalt-10: rgba(var(--c-cobalt-rgb), 0.1);
+  --c-cobalt-20: rgba(var(--c-cobalt-rgb), 0.2);
+  --c-cobalt-40: rgba(var(--c-cobalt-rgb), 0.4);
+  --c-cobalt-80: rgba(var(--c-cobalt-rgb), 0.8);
+
+  /* Animation Tokens */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
+  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ease-out-quart: linear;
+    --ease-in-out-expo: linear;
+    --spring-bounce: linear;
+  }
+}

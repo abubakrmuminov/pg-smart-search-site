@@ -1,0 +1,113 @@
+.dashboardSection {
+  padding: 8rem 0;
+  background: var(--s-0);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header {
+  margin-bottom: 3rem;
+  border-left: 2px solid var(--c-turbo);
+  padding-left: 1.5rem;
+}
+
+.title {
+  font-family: var(--font-jetbrains);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.pulse {
+  color: var(--c-turbo);
+  font-size: 8px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.subtitle {
+  font-family: var(--font-jetbrains);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--s-1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.metricLabel {
+  font-family: var(--font-jetbrains);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
+}
+
+.metricValue {
+  font-family: var(--font-jetbrains);
+  font-weight: 700;
+  font-size: 24px;
+  color: #fff;
+}
+
+.sparkline {
+  width: 100%;
+  height: 60px;
+}
+
+@media (max-width: 768px) {
+  .dashboardSection {
+    padding: 4rem 0;
+  }
+
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .metricValue {
+    font-size: 20px;
+  }
+
+  .sparkline {
+    height: 40px;
+  }
+}
