@@ -10,7 +10,6 @@ import { LiveSearchDemo } from '../components/LiveDemo/LiveSearchDemo';
 import { PipelineSimulator } from '../components/Simulator/PipelineSimulator';
 import { BentoGrid } from '../components/Bento/BentoGrid';
 import { PerformanceDashboard } from '../components/Dashboard/PerformanceDashboard';
-import { CodeSandbox } from '../components/Sandbox/CodeSandbox';
 import { IndexGuide } from '../components/UI/IndexGuide';
 
 const Reveal: React.FC<{ children: React.ReactNode; id?: string }> = ({ children, id }) => {
@@ -55,10 +54,6 @@ export default function Home() {
 
         <Reveal>
           <PerformanceDashboard />
-        </Reveal>
-
-        <Reveal id="sandbox">
-          <CodeSandbox />
         </Reveal>
 
         <footer style={{

@@ -39,7 +39,6 @@ export const Navbar: React.FC = () => {
         <div className={`${styles.links} ${isMenuOpen ? styles.mobileLinksActive : ''}`}>
           <Link href="/#simulator" className={styles.link} onClick={closeMenu}>{t.nav.simulator}</Link>
           <Link href="/#features" className={styles.link} onClick={closeMenu}>{t.nav.features}</Link>
-          <Link href="/#sandbox" className={styles.link} onClick={closeMenu}>{t.nav.sandbox}</Link>
           
           <div className={styles.mobileActions}>
             <button 

@@ -1,180 +1,97 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useI18n } from '../../context/I18nContext';
 import styles from './PipelineSimulator.module.css';
 
-type NodeStatus = 'idle' | 'processing' | 'success' | 'empty' | 'aborted';
-
-interface NodeDef {
+interface LogEntry {
   id: string;
-  type: 'rect' | 'diamond' | 'terminator';
-  label: string;
-  x: number; // percentage (desktop)
-  y: number; // percentage (desktop)
-  mx?: number; // percentage (mobile)
-  my?: number; // percentage (mobile)
-}
-
-interface Connection {
-  from: string;
-  to: string;
+  timestamp: string;
+  message: string;
+  type: 'info' | 'success' | 'warn' | 'error' | 'system';
 }
 
 export const PipelineSimulator: React.FC = () => {
   const { t } = useI18n();
   const [isRunning, setIsRunning] = useState(false);
-  const [nodeStatuses, setNodeStatuses] = useState<Record<string, NodeStatus>>({});
-  const [activePaths, setActivePaths] = useState<string[]>([]);
-  const [currentScenario, setCurrentScenario] = useState<'success' | 'wait' | 'fallback'>('success');
-  const [isMobile, setIsMobile] = useState(false);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [scenario, setScenario] = useState<'success' | 'wait' | 'fallback'>('success');
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const addLog = (message: string, type: LogEntry['type'] = 'info') => {
+    const entry: LogEntry = {
+      id: Math.random().toString(36).substr(2, 9),
+      timestamp: new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      message,
+      type
+    };
+    setLogs(prev => [...prev, entry]);
+  };
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const nodes: NodeDef[] = useMemo(() => [
-    { id: 'start', type: 'terminator', label: t.simulator.userRequest, x: 80, y: 10, mx: 50, my: 4 },
-    { id: 'handler', type: 'rect', label: t.simulator.handler, x: 80, y: 22, mx: 50, my: 10 },
-    { id: 'norm', type: 'rect', label: t.simulator.norm, x: 80, y: 34, mx: 50, my: 16 },
-    { id: 'parallel', type: 'diamond', label: t.simulator.parallel, x: 80, y: 50, mx: 50, my: 24 },
-    { id: 'branchA', type: 'rect', label: t.simulator.branchA, x: 60, y: 65, mx: 30, my: 32 },
-    { id: 'branchB', type: 'rect', label: t.simulator.branchB, x: 90, y: 65, mx: 70, my: 32 },
-    { id: 'priority', type: 'diamond', label: t.simulator.priorityCheck, x: 35, y: 20, mx: 30, my: 42 },
-    { id: 'yesResults', type: 'rect', label: t.simulator.yesResults, x: 15, y: 20, mx: 15, my: 50 },
-    { id: 'abortB', type: 'rect', label: t.simulator.abortB, x: 15, y: 40, mx: 15, my: 58 },
-    { id: 'waitB', type: 'diamond', label: t.simulator.waitB, x: 35, y: 40, mx: 50, my: 50 },
-    { id: 'resFound', type: 'diamond', label: t.simulator.resultsFound, x: 35, y: 60, mx: 50, my: 58 },
-    { id: 'fallback', type: 'rect', label: t.simulator.fuzzyFallback, x: 55, y: 75, mx: 75, my: 61 },
-    { id: 'hasResults', type: 'diamond', label: t.simulator.hasResults, x: 35, y: 75, mx: 50, my: 66 },
-    { id: 'autoLayout', type: 'rect', label: t.simulator.autoLayout, x: 15, y: 75, mx: 35, my: 74 },
-    { id: 'final', type: 'terminator', label: t.simulator.finalResult, x: 15, y: 92, mx: 50, my: 92 },
-  ], [t]);
-
-  const connections: Connection[] = [
-    { from: 'start', to: 'handler' },
-    { from: 'handler', to: 'norm' },
-    { from: 'norm', to: 'parallel' },
-    { from: 'parallel', to: 'branchA' },
-    { from: 'parallel', to: 'branchB' },
-    { from: 'branchA', to: 'priority' },
-    { from: 'priority', to: 'yesResults' },
-    { from: 'priority', to: 'waitB' },
-    { from: 'yesResults', to: 'abortB' },
-    { from: 'yesResults', to: 'final' },
-    { from: 'waitB', to: 'resFound' },
-    { from: 'resFound', to: 'final' },
-    { from: 'resFound', to: 'fallback' },
-    { from: 'fallback', to: 'hasResults' },
-    { from: 'hasResults', to: 'final' },
-    { from: 'hasResults', to: 'autoLayout' },
-    { from: 'autoLayout', to: 'final' },
-    { from: 'branchB', to: 'priority' }, // Real logic: Priority check considers both
-  ];
-
-  const updateStatus = (id: string, status: NodeStatus) => {
-    setNodeStatuses(prev => ({ ...prev, [id]: status }));
-  };
-
-  const activatePath = (from: string, to: string) => {
-    setActivePaths(prev => [...prev, `${from}->${to}`]);
-  };
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [logs]);
 
   const runSimulation = async () => {
     if (isRunning) return;
     setIsRunning(true);
-    setNodeStatuses({});
-    setActivePaths([]);
-
+    setLogs([]);
+    
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
+    
     try {
-      // Step 1: Pre-processing
-      updateStatus('start', 'processing');
+      addLog('INITIALIZING SEARCH_PIPELINE_ENGINE v1.3.0...', 'system');
       await sleep(600);
-      activatePath('start', 'handler');
-      updateStatus('start', 'success');
-      updateStatus('handler', 'processing');
+      
+      addLog(`[INCOMING] ${t.simulator.userRequest}`, 'info');
+      await sleep(400);
+      
+      addLog(`[PIPELINE] ${t.simulator.handler} -> VALIDATING SCHEMA`, 'info');
+      await sleep(500);
+      
+      addLog(`[ASSEMBLY] ${t.simulator.norm} -> APPLYING TRANSFORMATION`, 'info');
       await sleep(600);
-      activatePath('handler', 'norm');
-      updateStatus('handler', 'success');
-      updateStatus('norm', 'processing');
-      await sleep(600);
-      activatePath('norm', 'parallel');
-      updateStatus('norm', 'success');
-      updateStatus('parallel', 'processing');
-      await sleep(800);
-
-      // Step 2: CONCURRENT START
-      activatePath('parallel', 'branchA');
-      activatePath('parallel', 'branchB');
-      updateStatus('parallel', 'success');
-      updateStatus('branchA', 'processing');
-      updateStatus('branchB', 'processing');
+      
+      addLog(`[STRATEGY] ${t.simulator.parallel} -> STARTING CONCURRENT BRANCHES`, 'warn');
+      await sleep(400);
+      
+      addLog(`-> SPAWNING ${t.simulator.branchA}`, 'system');
+      addLog(`-> SPAWNING ${t.simulator.branchB}`, 'system');
       await sleep(1000);
+      
+      addLog(`[RESULT] ${t.simulator.branchA} COMPLETE`, 'success');
+      addLog(`[ORCHESTRATOR] ${t.simulator.priorityCheck}`, 'info');
+      await sleep(600);
 
-      // Branch A finishes first (Turbo)
-      activatePath('branchA', 'priority');
-      updateStatus('branchA', 'success');
-      updateStatus('priority', 'processing');
-      await sleep(800);
-
-      if (currentScenario === 'success') {
-        // SCENARIO 1: FTS WINS
-        updateStatus('priority', 'success');
-        activatePath('priority', 'yesResults');
-        updateStatus('yesResults', 'success');
-        
-        // KILL BRANCH B
-        updateStatus('branchB', 'aborted');
-        activatePath('yesResults', 'abortB');
-        updateStatus('abortB', 'aborted');
-        await sleep(800);
-        
-        activatePath('yesResults', 'final');
-        updateStatus('final', 'success');
+      if (scenario === 'success') {
+        addLog(`[DEBUG] ${t.simulator.yesResults} -> ${t.liveDemo.statusFtsHit}`, 'success');
+        addLog(`[TERMINAL] ${t.simulator.abortB} -> SENDING SIGTERM`, 'error');
+        await sleep(500);
+        addLog(`[PIPELINE] ${t.simulator.finalResult} READY`, 'success');
       } else {
-        // SCENARIOS 2 & 3: FTS EMPTY
-        updateStatus('priority', 'empty');
-        activatePath('priority', 'waitB');
-        updateStatus('waitB', 'processing');
-        await sleep(400); // FTS is empty, wait for B to finish
-        
-        updateStatus('branchB', 'success');
-        activatePath('branchB', 'priority');
-        await sleep(400);
-        
-        activatePath('waitB', 'resFound');
-        updateStatus('waitB', 'success');
-        updateStatus('resFound', 'processing');
+        addLog(`[DEBUG] ${t.simulator.branchA} -> ${t.simulator.noEmpty}`, 'warn');
+        addLog(`[ORCHESTRATOR] ${t.simulator.waitB}`, 'info');
         await sleep(800);
+        
+        addLog(`[RESULT] ${t.simulator.branchB} COMPLETE`, 'success');
+        addLog(`[DEBUG] ${t.simulator.resultsFound}`, 'info');
+        await sleep(400);
 
-        if (currentScenario === 'wait') {
-          // SCENARIO 2: TRIGRAM FOUND
-          updateStatus('resFound', 'success');
-          activatePath('resFound', 'final');
-          updateStatus('final', 'success');
+        if (scenario === 'wait') {
+          addLog(`[PIPELINE] ENGINE_RESOLUTION -> TRIGRAM_STRATEGY`, 'success');
+          addLog(`[PIPELINE] ${t.simulator.finalResult} READY`, 'success');
         } else {
-          // SCENARIO 3: BOTH EMPTY -> FALLBACK
-          updateStatus('resFound', 'empty');
-          activatePath('resFound', 'fallback');
-          updateStatus('fallback', 'processing');
+          addLog(`[WARN] ${t.simulator.resultsFound} -> 0 matches`, 'error');
+          addLog(`[FALLBACK] ${t.simulator.fuzzyFallback} -> TRIGGERING FUZZY_V3`, 'warn');
           await sleep(1000);
           
-          updateStatus('fallback', 'success');
-          activatePath('fallback', 'hasResults');
-          updateStatus('hasResults', 'processing');
-          await sleep(800);
-          
-          updateStatus('hasResults', 'success');
-          activatePath('hasResults', 'autoLayout');
-          updateStatus('autoLayout', 'success');
-          activatePath('autoLayout', 'final');
-          updateStatus('final', 'success');
+          addLog(`[DEBUG] ${t.simulator.hasResults} -> DYNAMIC_SIMILARITY applied`, 'success');
+          addLog(`[POST] ${t.simulator.autoLayout} -> FIXING KEYBOARD_LAYOUT`, 'info');
+          await sleep(600);
+          addLog(`[PIPELINE] ${t.simulator.finalResult} READY`, 'success');
         }
       }
     } finally {
@@ -183,133 +100,81 @@ export const PipelineSimulator: React.FC = () => {
   };
 
   return (
-    <div className={styles.simulatorContainer}>
+    <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>{t.simulator.title}</h2>
-        <div className={styles.legend}>
-            <div className={styles.legendItem}>
-                <div className={styles.legendColor} style={{color: 'var(--c-turbo)'}}></div>
-                <span>CONCURRENT</span>
-            </div>
-            <div className={styles.legendItem}>
-                <div className={styles.legendColor} style={{color: 'var(--c-emerald)'}}></div>
-                <span>RESOLVED</span>
-            </div>
-            <div className={styles.legendItem}>
-                <div className={styles.legendColor} style={{color: 'var(--c-violet)'}}></div>
-                <span>ABORTED</span>
-            </div>
+        <div className={styles.titleInfo}>
+          <h2 className={styles.title}>{t.simulator.title}</h2>
+          <div className={styles.statusBadge}>
+            <span className={styles.dot} />
+            NODE_01: ONLINE
+          </div>
+        </div>
+        <div className={styles.actions}>
+          <button 
+            className={styles.runBtn} 
+            onClick={runSimulation}
+            disabled={isRunning}
+          >
+            {isRunning ? 'EXECUTING...' : t.simulator.btnQuery}
+          </button>
         </div>
       </div>
 
-      <div className={styles.flowWrapper}>
-        <svg className={styles.svgLayer} viewBox="0 0 100 100" preserveAspectRatio="none">
-          {connections.map(conn => {
-            const from = nodes.find(n => n.id === conn.from);
-            const to = nodes.find(n => n.id === conn.to);
-            if (!from || !to) return null;
-            
-            const isActive = activePaths.includes(`${conn.from}->${conn.to}`);
-            const fromStatus = nodeStatuses[conn.from];
-            const toStatus = nodeStatuses[conn.to];
-            
-            let lineClass = styles.connector;
-            if (isActive) lineClass += ` ${styles.connectorActive}`;
-            if (fromStatus === 'success' && toStatus === 'success') lineClass += ` ${styles.connectorSuccess}`;
-            if (fromStatus === 'aborted' || toStatus === 'aborted') lineClass += ` ${styles.connectorAborted}`;
-
-            const getX = (n: NodeDef) => (isMobile ? (n.mx ?? n.x) : n.x);
-            const getY = (n: NodeDef) => (isMobile ? (n.my ?? n.y) : n.y);
-
-            const fx = getX(from);
-            const fy = getY(from);
-            const tx = getX(to);
-            const ty = getY(to);
-
-            // Simple Bezier for vertical-ish flow
-            const path = `M${fx} ${fy}C${fx} ${(fy + ty) / 2},${tx} ${(fy + ty) / 2},${tx} ${ty}`;
-
-            return (
-              <g key={`${conn.from}-${conn.to}`}>
-                <path
-                  d={path}
-                  className={lineClass}
-                  fill="none"
-                />
-
-                {isActive && (
-                  <ellipse 
-                    rx={isMobile ? 0.3 : 0.7} 
-                    ry={isMobile ? 0.1 : 0.7} 
-                    className={styles.pulse} 
-                    fill="currentColor"
-                  >
-                    <animateMotion
-                      dur="1.6s"
-                      repeatCount="indefinite"
-                      path={path}
-                    />
-                  </ellipse>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-
-        <div className={styles.nodesLayer}>
-          {nodes.map(node => {
-            const status = nodeStatuses[node.id] || 'idle';
-            const nx = isMobile ? (node.mx ?? node.x) : node.x;
-            const ny = isMobile ? (node.my ?? node.y) : node.y;
-
-            return (
-              <div 
-                key={node.id} 
-                className={`${styles.node} ${styles[node.type]} ${styles[`node${status.charAt(0).toUpperCase() + status.slice(1)}`]}`}
-                style={{ left: `${nx}%`, top: `${ny}%` }}
+      <div className={styles.terminal} ref={scrollRef}>
+        <div className={styles.terminalHeader}>
+          <div className={styles.dots}>
+            <span style={{ background: '#ff5f56' }} />
+            <span style={{ background: '#ffbd2e' }} />
+            <span style={{ background: '#27c93f' }} />
+          </div>
+          <div className={styles.terminalTitle}>pg-smart-search@bash — 80x24</div>
+        </div>
+        
+        <div className={styles.terminalBody}>
+          {logs.length === 0 && !isRunning && (
+            <div className={styles.placeholder}>
+              System ready. Click "{t.simulator.btnQuery}" to start pipeline trace...
+            </div>
+          )}
+          <AnimatePresence initial={false}>
+            {logs.map((log) => (
+              <motion.div 
+                key={log.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className={`${styles.logEntry} ${styles[log.type]}`}
               >
-                <div className={styles.nodeGlow}></div>
-
-  <div className={styles.nodeInner}>
-    <span className={styles.nodeTitle}>
-      {node.label}
-    </span>
-
-    <span className={styles.nodeState}>
-      {status.toUpperCase()}
-    </span>
-  </div>
-</div>
-            );
-          })}
+                <span className={styles.timestamp}>[{log.timestamp}]</span>
+                <span className={styles.message}>{log.message}</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {isRunning && (
+            <motion.div 
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ repeat: Infinity, duration: 0.8 }}
+              className={styles.cursor}
+            >
+              _
+            </motion.div>
+          )}
         </div>
       </div>
 
-      <div className={styles.controls}>
+      <div className={styles.scenarios}>
+        <span className={styles.scenarioLabel}>PIPELINE_MODE:</span>
         <div className={styles.scenarioPills}>
-          {([ 
-            { key: 'success', label: 'FTS TURBO', sub: 'B ABORTED' },
-            { key: 'wait',    label: 'TRIGRAM WAIT', sub: 'FTS EMPTY' },
-            { key: 'fallback',label: 'DUAL FALLBACK', sub: 'FUZZY ON' },
-          ] as const).map(({ key, label, sub }) => (
+          {(['success', 'wait', 'fallback'] as const).map((s) => (
             <button
-              key={key}
-              onClick={() => !isRunning && setCurrentScenario(key)}
+              key={s}
+              className={`${styles.scenarioPill} ${scenario === s ? styles.active : ''}`}
+              onClick={() => setScenario(s)}
               disabled={isRunning}
-              className={`${styles.scenarioPill} ${currentScenario === key ? styles.scenarioPillActive : ''}`}
             >
-              <span className={styles.pillLabel}>{label}</span>
-              <span className={styles.pillSub}>{sub}</span>
+              {s.toUpperCase()}
             </button>
           ))}
         </div>
-        <button 
-          onClick={runSimulation} 
-          disabled={isRunning} 
-          className={styles.searchBtn}
-        >
-          {isRunning ? '...' : t.simulator.btnQuery}
-        </button>
       </div>
     </div>
   );
