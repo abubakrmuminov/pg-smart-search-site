@@ -53,6 +53,7 @@ export const ru = {
     abortLabel: 'ВНЕШНИЙ ABORTSIGNAL',
     latencyLabel: 'ЗАДЕРЖКА FTS',
     abortMsg: '✗ Поиск отменен через AbortSignal (имитация ухода со страницы или дебаунсинга).',
+    traceTitle: 'ТЕХНИЧЕСКИЙ ТРЕЙС',
   },
   getStarted: {
     eyebrow: 'ДОКУМЕНТАЦИЯ',
