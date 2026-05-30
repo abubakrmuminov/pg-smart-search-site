@@ -7,7 +7,6 @@ An elite, high-performance documentation portal for the `pg-smart-search` SDK. B
 - **Execution Flow Simulator**: Real-time visualization of the Parallel Fast-Track engine, demonstrating FTS vs Trigram orchestration and "Zombie Prevention" logic.
 - **Visual Query Debugger**: A "Technical Trace" engine that shows how queries are sanitized, corrected for layout (qwerty → ru), and tokenized.
 - **Interactive Index Guide**: Comprehensive guide for PostgreSQL indexing strategies (GIN vs GiST) with snippets for Prisma and TypeORM.
-- **ORM Code Sandbox**: Interactive code samples for seamless integration with modern Node.js ORMs.
 - **Elite Aesthetic**: High-fidelity "Blueprint" design system with glassmorphism, noise grain, and 60 FPS animations.
 
 ## 🛠️ Tech Stack

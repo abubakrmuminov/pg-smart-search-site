@@ -10,6 +10,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
   - [x] Refactor `BentoGrid` for mobile stacked layout
   - [x] Fix `PerformanceDashboard` charts for small screens
   - [x] Optimize `PipelineSimulator` for mobile viewport
-  - [x] Ensure `CodeSandbox` and `LiveDemo` are touch-friendly
+  - [x] Ensure `LiveDemo` is touch-friendly
   - [x] Verify horizontal scrolling issues on real mobile devices
   <!-- END:nextjs-agent-rules -->

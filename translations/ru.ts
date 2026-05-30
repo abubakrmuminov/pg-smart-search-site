@@ -13,7 +13,6 @@ export const ru = {
   nav: {
     simulator: 'СИМУЛЯТОР',
     features: 'ФУНКЦИИ',
-    sandbox: 'ПЕСОЧНИЦА',
     logo: 'PG-SMART-SEARCH',
   },
   hero: {
@@ -74,20 +73,6 @@ export const ru = {
     section4Text: 'Хотя библиотека сама управляет внутренними ресурсами, вы можете передать свой AbortSignal для связи поиска с жизненным циклом приложения.',
     section5: '5. Умная коррекция (Smart Layout)',
     section5Text: 'Библиотека автоматически распознает неверную раскладку клавиатуры (qwerty → ru) и применяет транслитерацию ISO 9.',
-  },
-  sandbox: {
-    tabBasic: 'БАЗОВЫЙ',
-    tabParallel: 'ПАРАЛЛЕЛЬ',
-    tabAbort: 'ОТМЕНА',
-    header: 'ПАНЕЛЬ ВЫПОЛНЕНИЯ',
-    btnExecute: 'ВЫПОЛНИТЬ',
-    btnRunning: 'ЗАПУСК...',
-    ready: 'ГОТОВО К ЗАПУСКУ...',
-    status: 'СТАТУС',
-    statusStreaming: 'ПОТОК',
-    statusIdle: 'ОЖИДАНИЕ',
-    latency: 'ЗАДЕРЖКА',
-    resultRank: 'РАНГ',
   },
   dashboard: {
     title: 'ЖИВАЯ АНАЛИТИКА',

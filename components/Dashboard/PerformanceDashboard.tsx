@@ -4,10 +4,10 @@ import styles from './PerformanceDashboard.module.css';
 
 // Ornstein-Uhlenbeck process parameters
 const METRICS_CONFIG = {
-  p99: { mu: 34, theta: 0.15, sigma: 1.5, unit: 'ms' },
-  dedup: { mu: 99.4, theta: 0.15, sigma: 0.1, unit: '%' },
-  memory: { mu: 2.1, theta: 0.15, sigma: 0.05, unit: 'MB' },
-  qps: { mu: 847, theta: 0.15, sigma: 20, unit: '' },
+  p99: { mu: 0.8, theta: 0.15, sigma: 0.05, unit: 'ms' },
+  dedup: { mu: 99.8, theta: 0.15, sigma: 0.05, unit: '%' },
+  memory: { mu: 1.2, theta: 0.15, sigma: 0.02, unit: 'MB' },
+  qps: { mu: 72430, theta: 0.15, sigma: 1200, unit: '' },
 };
 
 const Sparkline: React.FC<{ data: number[]; color: string }> = ({ data, color }) => {
@@ -77,17 +77,17 @@ const Sparkline: React.FC<{ data: number[]; color: string }> = ({ data, color })
 export const PerformanceDashboard: React.FC = () => {
   const { t } = useI18n();
   const [metrics, setMetrics] = useState({
-    p99: 34,
-    dedup: 99.4,
-    memory: 2.1,
-    qps: 847,
+    p99: 0.8,
+    dedup: 99.8,
+    memory: 1.2,
+    qps: 72430,
   });
 
   const [history, setHistory] = useState<{ [key: string]: number[] }>({
-    p99: Array(60).fill(34),
-    dedup: Array(60).fill(99.4),
-    memory: Array(60).fill(2.1),
-    qps: Array(60).fill(847),
+    p99: Array(60).fill(0.8),
+    dedup: Array(60).fill(99.8),
+    memory: Array(60).fill(1.2),
+    qps: Array(60).fill(72430),
   });
 
   useEffect(() => {

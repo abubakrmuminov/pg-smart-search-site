@@ -13,7 +13,6 @@ export const en = {
   nav: {
     simulator: 'SIMULATOR',
     features: 'FEATURES',
-    sandbox: 'SANDBOX',
     logo: 'PG-SMART-SEARCH',
   },
   hero: {
@@ -74,20 +73,6 @@ export const en = {
     section4Text: 'While the library manages internal resources, you can pass your own AbortSignal to link search with your app lifecycle.',
     section5: '5. Smart Correction (Layout & Translit)',
     section5Text: 'The library automatically recognizes incorrect keyboard layouts (qwerty → ru) and applies ISO 9 transliteration.',
-  },
-  sandbox: {
-    tabBasic: 'BASIC',
-    tabParallel: 'PARALLEL',
-    tabAbort: 'ABORT',
-    header: 'EXECUTION PANEL',
-    btnExecute: 'EXECUTE',
-    btnRunning: 'RUNNING...',
-    ready: 'READY TO EXECUTE...',
-    status: 'STATUS',
-    statusStreaming: 'STREAMING',
-    statusIdle: 'IDLE',
-    latency: 'LATENCY',
-    resultRank: 'RANK',
   },
   dashboard: {
     title: 'LIVE ANALYTICS',
