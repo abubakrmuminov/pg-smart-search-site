@@ -144,6 +144,33 @@ export const Hero: React.FC = () => {
         </motion.div>
 
         <motion.div
+          className={styles.installContainer}
+          variants={{
+            hidden: { opacity: 0, y: 10 },
+            visible: { opacity: 1, y: 0 }
+          }}
+          transition={{ delay: 0.7 }}
+        >
+          <div className={styles.installSnippet}>
+            <span className={styles.prompt}>$</span>
+            <code className={styles.code}>npm install pg-smart-search</code>
+            <button 
+              className={styles.copyBtn}
+              onClick={() => {
+                navigator.clipboard.writeText('npm install pg-smart-search');
+                // Optional: add a temporary "Copied!" state
+              }}
+              title={t.common.copy}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+        </motion.div>
+
+        <motion.div
           className={styles.stats}
           variants={{
             hidden: { opacity: 0 },
